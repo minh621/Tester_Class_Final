@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, content-scale=1.0">
+    <title>Plane Ticket Calculation</title>
+    <link rel="stylesheet" href="styles.css"> <!-- Liên kết đến file CSS -->
+    <script>
+        function validateForm() {
+            const name = document.getElementById('name').value;
+            const address = document.getElementById('address').value;
+            const idCard = document.getElementById('id_card').value;
+            const dob = document.getElementById('dob').value;
+            const classType = document.getElementById('class_type').value;
+
+            // Xóa thông báo lỗi cũ
+            document.getElementById('name-error').textContent = '';
+            document.getElementById('address-error').textContent = '';
+            document.getElementById('id-card-error').textContent = '';
+            document.getElementById('dob-error').textContent = '';
+            document.getElementById('class-type-error').textContent = '';
+
+            // Kiểm tra trường Name
+            if (!name) {
+                document.getElementById('name-error').textContent = "Phải điền mục này.";
+                return false;
+            }
+            const nameRegex = /^[\w\sÀ-ỹ]*$/; // Cho phép chữ cái, số, dấu cách và ký tự tiếng Việt
+            if (name.length > 50) {
+                document.getElementById('name-error').textContent = "Tên không được quá 50 ký tự.";
+                return false;
+            }
+            if (!nameRegex.test(name)) {
+                document.getElementById('name-error').textContent = "Tên không được có số hoặc ký tự đặc biệt";
+                return false;
+            }
+            
+
+            // Kiểm tra trường Address
+            if (!address) {
+                document.getElementById('adress-error').textContent = "Phải điền mục này.";
+                return false;
+            }
+            if (address.length > 200) {
+                document.getElementById('address-error').textContent = "Địa chỉ không được có quá 200 ký tự.";
+                return false;
+            }
+            const addressRegex = /^[\w\sÀ-ỹ]*$/; // Cho phép chữ cái, số, dấu cách và ký tự tiếng Việt
+            if (!addressRegex.test(address)) {
+                document.getElementById('address-error').textContent = "Địa chỉ không được có ký tự đặc biệt.";
+                return false;
+            }
+            
+
+            // Kiểm tra trường ID Card
+            if (!idCard) {
+                document.getElementById('id-card-error').textContent = "Phải điền mục này.";
+                return false;
+            }
+            const idCardRegex = /^\d{9}$/; // Chỉ cho phép 9 chữ số
+            if (!idCardRegex.test(idCard)) {
+                document.getElementById('id-card-error').textContent = "ID phải có đúng 9 chữ số.";
+                return false;
+            }
+            
+
+            // Kiểm tra trường Date of Birth
+            if (!dob) {
+                document.getElementById('dob-error').textContent = "Phải điền mục này.";
+                return false;
+            }
+
+            // Kiểm tra trường Type of Class
+            if (!classType) {
+                document.getElementById('class-type-error').textContent = "Phải điền mục này.";
+                return false;
+            }
+
+            return true; // Nếu tất cả kiểm tra đều hợp lệ
+        }
+
+        function calculatePrice() {
+            if (!validateForm()) return; // Kiểm tra form trước
+
+            const dob = new Date(document.getElementById('dob').value);
+            const currentYear = new Date().getFullYear(); // Năm hiện tại
+            let age = currentYear - dob.getFullYear();
+
+            // Nếu năm sinh là 2024, tuổi sẽ được cho bằng 1
+            if (dob.getFullYear() === 2024) {
+                age = 1;
+            }
+
+            // Kiểm tra tuổi phải > 0
+            if (age <= 0) {
+                alert("Age must be greater than 0.");
+                return;
+            }
+
+            const classType = document.getElementById('class_type').value;
+            let price;
+
+            // Tính giá vé dựa trên loại hạng và độ tuổi
+            if (classType === 'economy') {
+                price = (age < 7) ? 700000 : 3000000;
+            } else if (classType === 'business') {
+                price = (age < 7) ? 1500000 : 4000000;
+            }
+
+            // Cập nhật giá trị tổng vào thẻ Payment
+            document.getElementById('total-price').textContent = price.toLocaleString() + ' VND';
+        }
+    </script>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Plane Ticket Calculation</h2>
+    <form onsubmit="return false;"> <!-- Ngăn chặn gửi form -->
+        <div class="form-group">
+            <label for="name">Name *</label>
+            <input type="text" id="name" required>
+            <span class="error-message" id="name-error" style="color: red;"></span> <!-- Thêm thẻ thông báo -->
+        </div>
+        <div class="form-group">
+            <label for="address">Address *</label>
+            <input type="text" id="address" required>
+            <span class="error-message" id="address-error" style="color: red;"></span>
+        </div>
+        <div class="form-group">
+            <label for="id_card">ID Card *</label>
+            <input type="text" id="id_card" required>
+            <span class="error-message" id="id-card-error" style="color: red;"></span>
+        </div>
+        <div class="form-group">
+            <label for="dob">Date of Birth *</label>
+            <input type="date" id="dob" required>
+            <span class="error-message" id="dob-error" style="color: red;"></span>
+        </div>
+        <div class="form-group">
+            <label for="class_type">Type of Class *</label>
+            <select id="class_type" required>
+                <option value="economy">Economy Class</option>
+                <option value="business">Business Class</option>
+            </select>
+            <span class="error-message" id="class-type-error" style="color: red;"></span>
+        </div>
+        </div>
+        <div class="payment">
+            <span>Payment: <span id="total-price"></span></span>
+        </div>
+        <button type="button" onclick="calculatePrice()">Calculator</button> <!-- Nút Calculator -->
+    </form>
+</div>
+
+</body>
+</html>
+
+<script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-analytics.js";
+    // TODO: Add SDKs for Firebase products that you want to use
+    // https://firebase.google.com/docs/web/setup#available-libraries
+  
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyDMYjkDRYJV0eFPHAnd_5QG5yGvpL9bBA0",
+      authDomain: "tester-class-final-asignment.firebaseapp.com",
+      projectId: "tester-class-final-asignment",
+      storageBucket: "tester-class-final-asignment.firebasestorage.app",
+      messagingSenderId: "47291944486",
+      appId: "1:47291944486:web:de1de6cbdf2fe0f166e0e7",
+      measurementId: "G-NBT3X5YF4P"
+    };
+  
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const analytics = getAnalytics(app);
+  </script>
